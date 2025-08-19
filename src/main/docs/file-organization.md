@@ -1,0 +1,53 @@
+- digilib
+    - motors
+        - control
+          - MotorControl.java (interface)
+          - StaticSparkControlHelper.java
+          - CosineSparkControlHelper.java
+        - MotorSpecs.java
+        - Motor.java (interface)
+        - SparkMotor.java
+        - TalonFXMotor.java
+        - TalonFXSMotor.java
+    - plants
+        - Gearbox.java
+        - Elevator.java
+        - Arm.java
+    - sims
+        - SimGearbox.java
+        - SimElevator.java
+        - SimArm.java
+    - subsystems
+        - stateSubsystems
+        - ledSubsystems
+        - sensorSubsystems
+        - voltageSubsystems
+        - intakeSubsystems
+        - shooterSubsystems
+        - wristSubsystems
+        - turretSubsystems
+        - elevatorSubsystems
+        - armSubsystems
+        - driveSubsystems
+        - pneumaticSubsystems
+        - powerSubsystems
+- robot2026
+    - AutoFactory.java
+    - CommandsFactory.java
+    - Main.java
+    - Robot.java
+    - TeleopFactory.java
+- vendors
+    - ChoreoLib
+    - CTRE-Phoenix Replay (v6)
+    - libgrapplefrc
+    - maplesim
+    - PathplannerLib
+    - photonlib
+    - PlayingWithFusion
+    - REVLib
+    - Studica
+    - LimelightHelpers.java (modify)
+- Dashboards
+    - Elastic
+    - AdvantageScope
