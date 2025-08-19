@@ -1,10 +1,9 @@
 package org.digitalgoats.digilib.subsystems.flywheel;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import static edu.wpi.first.units.Units.*;
@@ -16,6 +15,7 @@ public abstract class FlywheelSubsystem implements Subsystem {
 
     protected FlywheelSubsystem(String name) {
         this.name = name;
+        this.register();
     }
 
     @Override
@@ -69,18 +69,24 @@ public abstract class FlywheelSubsystem implements Subsystem {
 
     public abstract void applyCurrent(Current current);
 
+    public abstract void stopFlywheel();
+
     @Override
     public void periodic() {
-
+        SmartDashboard.putNumber("Velocity", getAngularVelocity().in(RPM));
     }
 
     // Trigger Factories Go Here.
 
     // Command Factories Go Here.
+    public Command setVelocity(AngularVelocity velocitySetpoint) {
+        return runOnce(() -> applyAngularVelocity(velocitySetpoint));
+    }
 
+    public Command stop(){
+        return runOnce(this::stopFlywheel);
+    }
     // SysIdCommand Factories Go Here.
-
-    // Static Creation Factories go Here.
 
 
 }

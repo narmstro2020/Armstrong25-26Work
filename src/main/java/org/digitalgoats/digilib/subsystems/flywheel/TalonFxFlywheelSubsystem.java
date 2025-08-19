@@ -38,6 +38,7 @@ public abstract class TalonFxFlywheelSubsystem extends FlywheelSubsystem {
         current.mut_setMagnitude(currentNow);
         angularVelocity.mut_replace(primary.getVelocity().getValue());
         angularAcceleration.mut_replace(primary.getAcceleration().getValue());
+        super.periodic();
     }
 
     @Override

@@ -10,7 +10,7 @@ import edu.wpi.first.units.measure.Voltage;
 
 final class TalonFxCurrentFlywheelSubsystem extends TalonFxFlywheelSubsystem {
 
-    private final MotionMagicVelocityTorqueCurrentFOC motionMagicVelocityTorqueCurrentFOC = new MotionMagicVelocityTorqueCurrentFOC(0.0);
+    private final MotionMagicVelocityTorqueCurrentFOC motionMagicVelocityTorqueCurrentFOC = new MotionMagicVelocityTorqueCurrentFOC(0.0).withSlot(0);
     private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true);
 
     @SafeVarargs
@@ -35,6 +35,10 @@ final class TalonFxCurrentFlywheelSubsystem extends TalonFxFlywheelSubsystem {
         primary.setControl(voltageOut.withOutput(voltageSetpoint));
     }
 
+    @Override
+    public void stopFlywheel() {
+
+    }
 
 
 }
