@@ -11,7 +11,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.MutTime;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
@@ -19,7 +18,6 @@ import org.digitalgoats.digilib.sims.gearboxes.SimGearbox;
 import org.digitalgoats.digilib.sims.gearboxes.ctre.SimTalonFXVoltageGearbox;
 import org.digitalgoats.robot2026.Robot;
 
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 public final class TalonFxVoltageFlywheelSubsystem extends TalonFxFlywheelSubsystem {
@@ -27,7 +25,6 @@ public final class TalonFxVoltageFlywheelSubsystem extends TalonFxFlywheelSubsys
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0.0).withSlot(0);
     private final VoltageOut voltageOut = new VoltageOut(0.0);
     private double lastSimTime;
-    private Notifier simNotifier;
 
     @SafeVarargs
     private TalonFxVoltageFlywheelSubsystem(
@@ -95,13 +92,14 @@ public final class TalonFxVoltageFlywheelSubsystem extends TalonFxFlywheelSubsys
                 maxVoltage,
                 maxCurrent);
         lastSimTime = Timer.getFPGATimestamp();
-        simNotifier = new Notifier(() -> {
+        Notifier simNotifier = new Notifier(() -> {
             double currentTimeSeconds = Timer.getFPGATimestamp();
             double dtSeconds = currentTimeSeconds - lastSimTime;
             lastSimTime = currentTimeSeconds;
             simGearbox.update(dtSeconds);
         });
-        simNotifier.startPeriodic(0.004);
+        simNotifier.startPeriodic(0.001);
+
 
 
 

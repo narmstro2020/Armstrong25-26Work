@@ -3,8 +3,11 @@ package org.digitalgoats.digilib.subsystems.flywheel;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Arrays;
 
@@ -35,9 +38,12 @@ public abstract class TalonFxFlywheelSubsystem extends FlywheelSubsystem {
         for (TalonFX follower : followers) {
             currentNow += follower.getTorqueCurrent().getValueAsDouble();
         }
+        currentNow += primary.getTorqueCurrent().getValueAsDouble();
         current.mut_setMagnitude(currentNow);
         angularVelocity.mut_replace(primary.getVelocity().getValue());
         angularAcceleration.mut_replace(primary.getAcceleration().getValue());
+        SmartDashboard.putNumber("kT", primary.getMotorKT().getValueAsDouble());
+        SmartDashboard.putNumber("KTDC", DCMotor.getKrakenX60(1).KtNMPerAmp);
         super.periodic();
     }
 

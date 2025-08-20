@@ -85,6 +85,7 @@ public final class SimTalonFXVoltageGearbox extends SimTalonFXGearbox {
     public void update(double dtSeconds) {
         super.update(dtSeconds);
         var acceleration = gearbox.getTorque(primary.getTorqueCurrent().getValueAsDouble()) / J.baseUnitMagnitude();
+        SmartDashboard.putNumber("Current", gearbox.getCurrent(m_x.get(1, 0) * gearing, m_u.get(0, 0)));
         primarySim.setSupplyVoltage(RobotController.getBatteryVoltage());
         primarySim.setRawRotorPosition(m_y.get(0, 0) * gearing / 2 / Math.PI);
         primarySim.setRotorVelocity(m_y.get(1, 0) * gearing / 2 / Math.PI);

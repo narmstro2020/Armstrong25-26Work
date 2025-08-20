@@ -1,21 +1,37 @@
 package org.digitalgoats.digilib.subsystems.flywheel;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import static edu.wpi.first.units.Units.*;
 
-@Logged
 public abstract class FlywheelSubsystem implements Subsystem {
 
     private final String name;
+    protected final MutAngularVelocity angularVelocity = RadiansPerSecond.zero().mutableCopy();
+    protected final MutAngularAcceleration angularAcceleration = RadiansPerSecondPerSecond.zero().mutableCopy();
+    protected final MutVoltage voltage = Volts.zero().mutableCopy();
+    protected final MutCurrent current = Amps.zero().mutableCopy();
+    protected final MutAngularVelocity angularVelocitySetpoint = RadiansPerSecond.zero().mutableCopy();
+    protected final MutVoltage voltageSetpoint = Volts.zero().mutableCopy();
+    protected final MutCurrent currentSetpoint = Amps.zero().mutableCopy();
+    private final DoubleLogEntry flywheelVelocityLogEntry;
+    private final DoubleLogEntry flywheelAccelerationLogEntry;
+    private final DoubleLogEntry flywheelVoltageLogEnry;
+    private final DoubleLogEntry flywheelCurrentLogEntry;
+
 
     protected FlywheelSubsystem(String name) {
         this.name = name;
         this.register();
+        flywheelVelocityLogEntry = new DoubleLogEntry(DataLogManager.getLog(), "/" + name + "/velocity [radps]");
+        flywheelAccelerationLogEntry = new DoubleLogEntry(DataLogManager.getLog(), "/" + name + "/acceleration [radps2]");
+        flywheelVoltageLogEnry = new DoubleLogEntry(DataLogManager.getLog(), "/" + name + "/voltage [volts]");
+        flywheelCurrentLogEntry = new DoubleLogEntry(DataLogManager.getLog(), "/" + name + "/current [amps]");
+
     }
 
     @Override
@@ -23,29 +39,6 @@ public abstract class FlywheelSubsystem implements Subsystem {
         return name;
     }
 
-    @Logged
-    protected final MutAngularVelocity angularVelocity = RadiansPerSecond.zero().mutableCopy();
-
-    @Logged
-    protected final MutAngularAcceleration angularAcceleration = RadiansPerSecondPerSecond.zero().mutableCopy();
-
-    @Logged
-    protected final MutVoltage voltage = Volts.zero().mutableCopy();
-
-    @Logged
-    protected final MutCurrent current = Amps.zero().mutableCopy();
-
-    @Logged
-    protected final MutAngularVelocity angularVelocitySetpoint = RadiansPerSecond.zero().mutableCopy();
-
-    @Logged
-    protected final MutAngularAcceleration angularAccelerationSetpoint = RadiansPerSecondPerSecond.zero().mutableCopy();
-
-    @Logged
-    protected final MutVoltage voltageSetpoint = Volts.zero().mutableCopy();
-
-    @Logged
-    protected final MutCurrent currentSetpoint = Amps.zero().mutableCopy();
 
     public final AngularVelocity getAngularVelocity() {
         return angularVelocity;
@@ -55,11 +48,11 @@ public abstract class FlywheelSubsystem implements Subsystem {
         return angularAcceleration;
     }
 
-    public final MutVoltage getVoltage() {
+    public final Voltage getVoltage() {
         return voltage;
     }
 
-    public final MutCurrent getCurrent() {
+    public final Current getCurrent() {
         return current;
     }
 
@@ -73,7 +66,11 @@ public abstract class FlywheelSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Velocity", getAngularVelocity().in(RPM));
+        flywheelVelocityLogEntry.append(angularVelocity.baseUnitMagnitude());
+        flywheelAccelerationLogEntry.append(angularAcceleration.baseUnitMagnitude());
+        flywheelVoltageLogEnry.append(voltage.baseUnitMagnitude());
+        flywheelCurrentLogEntry.append(current.baseUnitMagnitude());
+
     }
 
     // Trigger Factories Go Here.
@@ -83,7 +80,7 @@ public abstract class FlywheelSubsystem implements Subsystem {
         return runOnce(() -> applyAngularVelocity(velocitySetpoint));
     }
 
-    public Command stop(){
+    public Command stop() {
         return runOnce(this::stopFlywheel);
     }
     // SysIdCommand Factories Go Here.
