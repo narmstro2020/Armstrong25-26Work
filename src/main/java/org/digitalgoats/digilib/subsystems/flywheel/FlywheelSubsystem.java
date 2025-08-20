@@ -4,6 +4,7 @@ import edu.wpi.first.units.measure.*;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import static edu.wpi.first.units.Units.*;
@@ -77,11 +78,12 @@ public abstract class FlywheelSubsystem implements Subsystem {
 
     // Command Factories Go Here.
     public Command setVelocity(AngularVelocity velocitySetpoint) {
-        return runOnce(() -> applyAngularVelocity(velocitySetpoint));
+        return runOnce(() -> applyAngularVelocity(velocitySetpoint))
+                .andThen(Commands.idle(this)).withName(getName() + ": Velocity Set to: " + velocitySetpoint);
     }
 
     public Command stop() {
-        return runOnce(this::stopFlywheel);
+        return run(this::stopFlywheel).withName(getName() + ": Flywheel Stopped");
     }
     // SysIdCommand Factories Go Here.
 

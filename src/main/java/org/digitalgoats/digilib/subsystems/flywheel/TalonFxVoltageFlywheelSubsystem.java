@@ -49,6 +49,8 @@ public final class TalonFxVoltageFlywheelSubsystem extends TalonFxFlywheelSubsys
         talonFXConfiguration.Slot0.kS = flywheelConfig.ks();
         talonFXConfiguration.Slot0.kV = flywheelConfig.kv() * 2 * Math.PI;
         talonFXConfiguration.Slot0.kA = flywheelConfig.ka() * 2 * Math.PI;
+        talonFXConfiguration.Slot0.kP = flywheelConfig.kp() * 2 * Math.PI;
+        talonFXConfiguration.Slot0.kD = flywheelConfig.kd() * 2 * Math.PI;
         primary.getConfigurator().apply(talonFXConfiguration);
 
         if (Robot.isSimulation()) {
@@ -74,11 +76,6 @@ public final class TalonFxVoltageFlywheelSubsystem extends TalonFxFlywheelSubsys
         primary.setControl(voltageOut.withOutput(voltageSetpoint));
     }
 
-    @Override
-    public void stopFlywheel() {
-        primary.stopMotor();
-    }
-
     private void startSimThread(LinearSystem<N2, N1, N2> plant,
                                 DCMotor gearbox,
                                 Voltage ks,
@@ -99,11 +96,6 @@ public final class TalonFxVoltageFlywheelSubsystem extends TalonFxFlywheelSubsys
             simGearbox.update(dtSeconds);
         });
         simNotifier.startPeriodic(0.001);
-
-
-
-
-
     }
 
     @SafeVarargs
@@ -124,17 +116,5 @@ public final class TalonFxVoltageFlywheelSubsystem extends TalonFxFlywheelSubsys
                 followers);
     }
 
-    @SafeVarargs
-    public static FlywheelSubsystem flywheelFromKrakenX60FOC(
-            String name,
-            FlywheelConfig flywheelConfig,
-            TalonFX primary,
-            Pair<TalonFX, Boolean>... followers) {
-        return new TalonFxCurrentFlywheelSubsystem(
-                name,
-                DCMotor.getKrakenX60(1 + followers.length),
-                flywheelConfig,
-                primary,
-                followers);
-    }
+
 }

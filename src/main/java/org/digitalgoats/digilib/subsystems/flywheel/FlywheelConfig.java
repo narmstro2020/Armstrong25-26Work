@@ -7,6 +7,8 @@ public record FlywheelConfig(
         double ks,
         double kv,
         double ka,
+        double kp,
+        double kd,
         double gearing,
         DCMotor gearbox,
         double maxVoltage,
