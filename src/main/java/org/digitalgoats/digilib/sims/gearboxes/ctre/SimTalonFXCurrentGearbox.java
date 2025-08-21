@@ -44,22 +44,27 @@ public final class SimTalonFXCurrentGearbox extends SimTalonFXGearbox {
 
     @Override
     protected Matrix<N2, N1> updateX(Matrix<N2, N1> currentXhat, Matrix<N1, N1> u, double dtSeconds) {
-        double inputCurrent = primary.getTorqueCurrent().getValueAsDouble();
-        inputCurrent = MathUtil.clamp(inputCurrent, -maxInputCurrent, maxInputCurrent);
-        double voltageUsed = gearbox.getVoltage(gearbox.getTorque(inputCurrent), currentXhat.get(1, 0) * gearing);
-        voltageUsed = MathUtil.clamp(voltageUsed, -maxVoltage, maxVoltage);
-        inputCurrent = gearbox.getCurrent(currentXhat.get(1, 0) * gearing, voltageUsed);
+        double appliedCurrent = primary.getTorqueCurrent().getValueAsDouble();
+        double inputCurrent = MathUtil.clamp(appliedCurrent, -maxInputCurrent, maxInputCurrent);
 
-        if (Math.abs(inputCurrent) > ks.baseUnitMagnitude()) {
+        if (Math.abs(inputCurrent) >= ks.baseUnitMagnitude()) {
             inputCurrent += -Math.signum(currentXhat.get(1, 0)) * ks.baseUnitMagnitude();
-        } else if (Math.abs(currentXhat.get(1, 0)) >= 0.0 && Math.abs(inputCurrent) <= ks.baseUnitMagnitude()) {
+        } else if (Math.abs(currentXhat.get(1, 0)) > 0.0 && Math.abs(inputCurrent) < ks.baseUnitMagnitude()) {
             inputCurrent = -ks.baseUnitMagnitude() * Math.signum(currentXhat.get(1, 0));
         } else {
             inputCurrent = 0.0;
-
         }
 
         u.set(0, 0, inputCurrent);
-        return super.updateX(currentXhat, u, dtSeconds);
+        var newStates = super.updateX(currentXhat, u, dtSeconds);
+
+        SmartDashboard.putNumber("Ve", newStates.get(1, 0));
+
+        if (Math.abs(inputCurrent) <= ks.baseUnitMagnitude() && Math.signum(newStates.get(1, 0)) != Math.signum(currentXhat.get(1, 0))) {
+            newStates.set(1, 0, 0);
+            return newStates;
+        } else {
+            return newStates;
+        }
     }
 }

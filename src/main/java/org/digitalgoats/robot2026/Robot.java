@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.digitalgoats.digilib.subsystems.flywheel.FlywheelConfig;
 import org.digitalgoats.digilib.subsystems.flywheel.FlywheelSubsystem;
-import org.digitalgoats.digilib.subsystems.flywheel.TalonFxCurrentFlywheelSubsystem;
 
 import static edu.wpi.first.units.Units.RPM;
 import static org.digitalgoats.digilib.subsystems.flywheel.TalonFxCurrentFlywheelSubsystem.*;
@@ -30,7 +29,7 @@ public class Robot extends TimedRobot {
                 0.12,
                 0.228137,
                 0.001411,
-                0.11,
+                0.00,
                 0.0000,
                 12.0,
                 DCMotor.getKrakenX60(1),
@@ -48,8 +47,8 @@ public class Robot extends TimedRobot {
                 0.12 / DCMotor.getKrakenX60Foc(1).rOhms,
                 0.0,
                 0.001411 / DCMotor.getKrakenX60Foc(1).rOhms,
-                0.1,
-                0.0000,
+                0.0,
+                0.000,
                 12.0,
                 DCMotor.getKrakenX60Foc(1),
                 12.0,

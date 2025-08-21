@@ -8,6 +8,7 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 
@@ -38,21 +39,25 @@ public final class SimTalonFXVoltageGearbox extends SimTalonFXGearbox {
 
     @Override
     protected Matrix<N2, N1> updateX(Matrix<N2, N1> currentXhat, Matrix<N1, N1> u, double dtSeconds) {
-        double inputVoltage = primary.getMotorVoltage().getValueAsDouble();
-        inputVoltage = MathUtil.clamp(inputVoltage, -maxInputVoltage, maxInputVoltage);
-        double currentDraw = gearbox.getCurrent(currentXhat.get(1, 0) * gearing, inputVoltage);
-        currentDraw = MathUtil.clamp(currentDraw, -maxCurrent, maxCurrent);
-        inputVoltage = gearbox.getVoltage(gearbox.getTorque(currentDraw), currentXhat.get(1, 0) * gearing);
+        double appliedVoltage = primary.getMotorVoltage().getValueAsDouble();
+        double inputVoltage = MathUtil.clamp(appliedVoltage, -maxInputVoltage, maxInputVoltage);
 
-        if (Math.abs(inputVoltage) > ks.baseUnitMagnitude()) {
+        if (Math.abs(inputVoltage) >= ks.baseUnitMagnitude()) {
             inputVoltage += -Math.signum(currentXhat.get(1, 0)) * ks.baseUnitMagnitude();
-        } else if (Math.abs(currentXhat.get(1, 0)) > 0.0) {
+        } else if (Math.abs(currentXhat.get(1, 0)) > 0.0 && Math.abs(inputVoltage) < ks.baseUnitMagnitude()) {
             inputVoltage = -ks.baseUnitMagnitude() * Math.signum(currentXhat.get(1, 0));
         } else {
             inputVoltage = 0.0;
         }
 
         u.set(0, 0, inputVoltage);
-        return super.updateX(currentXhat, u, dtSeconds);
+        var newStates = super.updateX(currentXhat, u, dtSeconds);
+
+        if (Math.abs(inputVoltage) <= ks.baseUnitMagnitude() && Math.signum(newStates.get(1, 0)) != Math.signum(currentXhat.get(1, 0))) {
+            newStates.set(1, 0, 0);
+            return newStates;
+        }else{
+            return newStates;
+        }
     }
 }
